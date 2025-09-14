@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wissenschaftlicher Taschenrechner</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts for a modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="manifest.json">
+    <!-- Theme Color for browsers -->
+    <meta name="theme-color" content="#1a202c">
+
+    <style>
+        /* Custom Styles for the Calculator */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent; /* Removes blue tap highlight on mobile */
+        }
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.75rem; /* 12px */
+        }
+        .btn {
+            /* This is the base style for all buttons */
+            user-select: none; /* Prevents text selection on double tap */
+        }
+        .display {
+            min-height: 100px;
+            position: relative;
+        }
+        .expression {
+            height: 2rem; /* h-8 */
+        }
+        .mode-indicator {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #a0aec0; /* text-gray-400 */
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-md bg-gray-800 rounded-2xl shadow-2xl p-6">
+        <!-- Display -->
+        <div class="display bg-gray-800 text-white w-full rounded-lg p-4 mb-4 text-right break-all shadow-inner">
+            <div class="mode-indicator">RAD</div>
+            <div id="expression" class="expression text-2xl text-gray-400 overflow-x-auto overflow-y-hidden"></div>
+            <div id="result" class="result text-5xl font-bold">0</div>
+        </div>
+
+        <!-- Buttons Grid -->
+        <div class="calculator-grid">
+            <!-- Functions -->
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700" data-value="sin(">sin</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700" data-value="cos(">cos</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700" data-value="tan(">tan</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700" data-value="Math.log10(">log</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700" data-value="Math.log(">ln</button>
+
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-600 hover:bg-gray-500 active:bg-gray-700" data-value="(">(</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-600 hover:bg-gray-500 active:bg-gray-700" data-value=")">)</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-600 hover:bg-gray-500 active:bg-gray-700" data-value="**">xʸ</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-600 hover:bg-gray-500 active:bg-gray-700" data-value="Math.sqrt(">√</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-600 hover:bg-gray-500 active:bg-gray-700" data-action="clear">AC</button>
+            
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-700 hover:bg-gray-600 active:bg-gray-800" data-value="7">7</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-700 hover:bg-gray-600 active:bg-gray-800" data-value="8">8</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-700 hover:bg-gray-600 active:bg-gray-800" data-value="9">9</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-600 hover:bg-gray-500 active:bg-gray-700" data-value="Math.PI">π</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-600 hover:bg-gray-500 active:bg-gray-700" data-action="backspace">⌫</button>
+
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-700 hover:bg-gray-600 active:bg-gray-800" data-value="4">4</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-700 hover:bg-gray-600 active:bg-gray-800" data-value="5">5</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-700 hover:bg-gray-600 active:bg-gray-800" data-value="6">6</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-600 hover:bg-gray-500 active:bg-gray-700" data-value="*">×</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-600 hover:bg-gray-500 active:bg-gray-700" data-value="/">÷</button>
+            
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-700 hover:bg-gray-600 active:bg-gray-800" data-value="1">1</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-700 hover:bg-gray-600 active:bg-gray-800" data-value="2">2</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-700 hover:bg-gray-600 active:bg-gray-800" data-value="3">3</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-600 hover:bg-gray-500 active:bg-gray-700" data-value="+">+</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-600 hover:bg-gray-500 active:bg-gray-700" data-value="-">−</button>
+            
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-700 hover:bg-gray-600 active:bg-gray-800" data-value="0">0</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-700 hover:bg-gray-600 active:bg-gray-800" data-value=".">.</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-gray-600 hover:bg-gray-500 active:bg-gray-700" data-value="Math.E">e</button>
+            <button class="btn w-full h-16 rounded-lg text-white text-xl font-medium flex items-center justify-center transition-all duration-200 ease-in-out shadow-md bg-green-600 hover:bg-green-500 active:bg-green-700 col-span-2" data-action="calculate">=</button>
+        </div>
+    </div>
+    
+    <footer class="text-center text-gray-500 mt-8">
+        <p>Ein Beispiel-Projekt für GitHub Pages.</p>
+        <div class="mt-2">
+            <a href="impressum.html" class="underline hover:text-white">Impressum</a>
+            <span class="mx-2">|</span>
+            <a href="datenschutz.html" class="underline hover:text-white">Datenschutzerklärung</a>
+        </div>
+    </footer>
+
+    <script>
+        // --- PWA Service Worker and Manifest Setup ---
+        
+        // 1. Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => console.log('Service Worker registriert:', registration.scope))
+                    .catch(err => console.error('Service Worker Registrierung fehlgeschlagen:', err));
+            });
+        }
+        
+        // --- Calculator Logic ---
+        
+        const expressionDiv = document.getElementById('expression');
+        const resultDiv = document.getElementById('result');
+        const buttons = document.querySelector('.calculator-grid');
+
+        let currentExpression = '';
+        let calculationDone = false;
+
+        buttons.addEventListener('click', (event) => {
+            const target = event.target;
+            // Ensure the click is on a button and not the grid gap
+            const button = target.closest('button');
+            if (!button) return;
+
+            const value = button.dataset.value;
+            const action = button.dataset.action;
+
+            if (value) {
+                handleValue(value);
+            } else if (action) {
+                handleAction(action);
+            }
+        });
+
+        function handleValue(value) {
+            if (calculationDone) {
+                // If the previous action was a calculation, decide whether to append to the result or start fresh.
+                const isOperator = ['+', '-', '*', '/', '**'].some(op => value.includes(op));
+                if (isOperator) {
+                     // If an operator is pressed, start a new calculation with the previous result.
+                     currentExpression = resultDiv.textContent === 'Error' ? '' : resultDiv.textContent;
+                } else {
+                    // Otherwise, start a completely new expression.
+                    currentExpression = '';
+                }
+                calculationDone = false;
+            }
+            
+            currentExpression += value;
+            updateDisplay();
+        }
+
+        function handleAction(action) {
+            switch (action) {
+                case 'clear':
+                    currentExpression = '';
+                    resultDiv.textContent = '0';
+                    break;
+                case 'backspace':
+                    currentExpression = currentExpression.slice(0, -1);
+                    break;
+                case 'calculate':
+                    calculate();
+                    return; // Avoid updating display twice
+            }
+            updateDisplay();
+        }
+
+        function calculate() {
+            if (currentExpression === '') {
+                resultDiv.textContent = '0';
+                return;
+            }
+
+            try {
+                // Replace user-friendly symbols and function names with JS equivalents
+                let evalExpression = currentExpression
+                                        .replace(/×/g, '*')
+                                        .replace(/÷/g, '/')
+                                        .replace(/sin\(/g, 'Math.sin(')
+                                        .replace(/cos\(/g, 'Math.cos(')
+                                        .replace(/tan\(/g, 'Math.tan(');
+
+                // Using new Function() is safer than direct eval()
+                const safeEval = new Function(`return ${evalExpression}`);
+                const result = safeEval();
+
+                // Check for valid number result
+                if (isNaN(result) || !isFinite(result)) {
+                    throw new Error("Ungültiges Ergebnis");
+                }
+                
+                // Format the result to avoid long decimal places
+                resultDiv.textContent = parseFloat(result.toPrecision(12));
+                calculationDone = true;
+
+            } catch (error) {
+                console.error('Calculation Error:', error);
+                resultDiv.textContent = 'Error';
+                calculationDone = true;
+            }
+            expressionDiv.textContent = currentExpression + ' =';
+        }
+
+        function updateDisplay() {
+            expressionDiv.textContent = currentExpression;
+            if (currentExpression === '' && !calculationDone) {
+                resultDiv.textContent = '0';
+            }
+        }
+    </script>
+</body>
+</html>
+
